@@ -14,7 +14,9 @@ const {REDIS_CONF} = require('./conf/db.js')
 const { isProd, isTest } = require('./conf/env.js')
 
 const index = require('./routes')
-const users = require('./routes/usersJWT')
+const userViewRouter = require('./routes/view/user.js')
+const userApiRouter = require('./routes/api/user.js')
+const usersJWT = require('./routes/usersJWT')
 const errorViewRouter = require('./routes/view/error')
 
 // error handler
@@ -23,7 +25,7 @@ if (isProd) {
     onErrorConfig.redirect = '/error'
 }
 onerror(app, onErrorConfig)
-
+/**
 app.use(
     jwtkoa(
         { secret: SECRET }
@@ -33,7 +35,7 @@ app.use(
         path: [/^\/users\/login/]
     })
 )
-
+**/
 // middlewares
 app.use(bodyparser({
     enableTypes: ['json', 'form', 'text']
@@ -72,7 +74,9 @@ app.use(session({
 
 // routes
 app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
+app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
+app.use(userApiRouter.routes(), userApiRouter.allowedMethods())
+app.use(usersJWT.routes(), usersJWT.allowedMethods())
 app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())
 
 // error-handling
