@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const util = require('util')
 const verify = util.promisify(jwt.verify)
 
-const { SECRET } = require('../conf/constants.js')
+const { SESSION_SECRET_KEY } = require('../conf/secretKeys.js')
 
 router.prefix('/users')
 
@@ -45,7 +45,7 @@ router.post('/login', async (ctx, next) => {
 router.get('/user-info', async (ctx, next) => {
     const token = ctx.header.authorization
     try {
-        const payload = await verify(token.split(' ')[1], SECRET)
+        const payload = await verify(token.split(' ')[1], SESSION_SECRET_KEY)
         ctx.body = {
             code: 0,
             userInfo: 'abc'

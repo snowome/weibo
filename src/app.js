@@ -11,7 +11,8 @@ const jwtkoa = require('koa-jwt')
 const { SECRET } = require('./conf/constants.js')
 
 const {REDIS_CONF} = require('./conf/db.js')
-const { isProd, isTest } = require('./conf/env.js')
+const { isProd, isTest } = require('./utils/env.js')
+const { SESSION_SECRET_KEY } = require('./conf/secretKeys')
 
 const index = require('./routes')
 const userViewRouter = require('./routes/view/user.js')
@@ -28,7 +29,7 @@ onerror(app, onErrorConfig)
 /**
 app.use(
     jwtkoa(
-        { secret: SECRET }
+        { secret: SESSION_SECRET_KEY }
     )
     // 不用哪些目录，忽略哪些请求不适用jwt验证
     .unless({
@@ -49,7 +50,7 @@ app.use(views(__dirname + '/views', {
 }))
 
 // session配置
-app.keys = ['hehe_123']
+app.keys = [SESSION_SECRET_KEY]
 app.use(session({
     key: 'weibo.sid',           // cookie name，默认'koa.sid'
     prefix: 'weibo:sess:',      // redis key 的前缀，默认：'koa:sess:'

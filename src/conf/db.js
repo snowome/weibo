@@ -1,4 +1,4 @@
-const { isDev, isProd } = require('./env.js')
+const { isDev, isProd } = require('../utils/env.js')
 
 let REDIS_CONF = {
     host: '127.0.0.1',
