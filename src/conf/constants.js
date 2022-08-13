@@ -1,3 +1,3 @@
 module.exports = {
-    SECRET: 'abcefg'
+    DEFAULT_PICTURE: 'https://dwz.cn/rnTnftZs',
 }

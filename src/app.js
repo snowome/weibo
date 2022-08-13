@@ -11,10 +11,13 @@ const jwtkoa = require('koa-jwt')
 const { SECRET } = require('./conf/constants.js')
 
 const {REDIS_CONF} = require('./conf/db.js')
-const { isProd, isTest } = require('./conf/env.js')
+const { isProd, isTest } = require('./utils/env.js')
+const { SESSION_SECRET_KEY } = require('./conf/secretKeys')
 
 const index = require('./routes')
-const users = require('./routes/usersJWT')
+const userViewRouter = require('./routes/view/user.js')
+const userApiRouter = require('./routes/api/user.js')
+const usersJWT = require('./routes/usersJWT')
 const errorViewRouter = require('./routes/view/error')
 
 // error handler
@@ -23,17 +26,17 @@ if (isProd) {
     onErrorConfig.redirect = '/error'
 }
 onerror(app, onErrorConfig)
-
+/**
 app.use(
     jwtkoa(
-        { secret: SECRET }
+        { secret: SESSION_SECRET_KEY }
     )
     // 不用哪些目录，忽略哪些请求不适用jwt验证
     .unless({
         path: [/^\/users\/login/]
     })
 )
-
+**/
 // middlewares
 app.use(bodyparser({
     enableTypes: ['json', 'form', 'text']
@@ -47,7 +50,7 @@ app.use(views(__dirname + '/views', {
 }))
 
 // session配置
-app.keys = ['hehe_123']
+app.keys = [SESSION_SECRET_KEY]
 app.use(session({
     key: 'weibo.sid',           // cookie name，默认'koa.sid'
     prefix: 'weibo:sess:',      // redis key 的前缀，默认：'koa:sess:'
@@ -72,7 +75,9 @@ app.use(session({
 
 // routes
 app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
+app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
+app.use(userApiRouter.routes(), userApiRouter.allowedMethods())
+app.use(usersJWT.routes(), usersJWT.allowedMethods())
 app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())
 
 // error-handling
