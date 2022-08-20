@@ -8,13 +8,15 @@ function _formatUserPicture(obj) {
 }
 
 function formatUser(list) {
+    console.log(1111111111111111)
     if (list == null) {
         return list
     }
     if (list instanceof Array) {
         return list.map(_formatUserPicture)
     }
-
+    console.log('--------------------')
+    console.log(_formatUserPicture(list))
     return _formatUserPicture(list)
 }
 
